@@ -2,6 +2,7 @@ package com.ktlo.simulator.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
@@ -16,6 +17,16 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CpuLoadService {
 
     private final AtomicLong taskCounter = new AtomicLong(0);
+
+    @Scheduled(fixedRate = 30000)
+    public void rebuildProcessingIndex() {
+        long end = System.currentTimeMillis() + 20000;
+        double checksum = 0;
+        while (System.currentTimeMillis() < end) {
+            checksum += Math.sqrt(checksum) * Math.PI;
+        }
+        log.debug("Processing index rebuild completed, checksum: {}", checksum);
+    }
 
     /**
      * Execute a CPU-intensive task for the specified duration.
