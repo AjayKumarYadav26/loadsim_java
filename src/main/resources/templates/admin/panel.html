@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Document Processing Platform'">Admin Panel - Document Processing Platform</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.5.1/css/all.min.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/portal.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body class="admin-body">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/admin}">
+                <i class="fas fa-shield-alt me-2"></i>
+                Admin Panel
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/admin}">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/simulations}">
+                            <i class="fas fa-cogs me-1"></i>Simulations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/portal}">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Portal
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2><i class="fas fa-shield-alt text-danger me-2"></i>Admin Panel - Simulation Monitoring</h2>
+                <p class="text-muted">Real-time monitoring of simulations and system metrics</p>
+            </div>
+        </div>
+
+        <!-- System Metrics Cards -->
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card bg-dark text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title mb-0">Active Simulations</h6>
+                                <h2 id="activeSimulations" class="mb-0">--</h2>
+                            </div>
+                            <div class="fs-1">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title mb-0">Thread Count</h6>
+                                <h2 id="threadCount" class="mb-0">--</h2>
+                            </div>
+                            <div class="fs-1">
+                                <i class="fas fa-server"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title mb-0">Memory Used</h6>
+                                <h2 id="memoryUsed" class="mb-0">-- MB</h2>
+                            </div>
+                            <div class="fs-1">
+                                <i class="fas fa-memory"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title mb-0">CPU Cores</h6>
+                                <h2 id="cpuCores" class="mb-0">--</h2>
+                            </div>
+                            <div class="fs-1">
+                                <i class="fas fa-microchip"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Simulations Table -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Active Simulations (Real-time)</h5>
+                        <button id="refreshSimulationsBtn" class="btn btn-sm btn-outline-light">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Job ID</th>
+                                        <th>File Name</th>
+                                        <th>Operation</th>
+                                        <th>Quality</th>
+                                        <th>Simulation Type</th>
+                                        <th>Endpoint</th>
+                                        <th>Status</th>
+                                        <th>Progress</th>
+                                        <th>Started</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="activeSimulationsTable">
+                                    <tr>
+                                        <td colspan="9" class="text-center">
+                                            <i class="fas fa-spinner fa-spin me-2"></i>Loading...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual Simulation Triggers -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-play-circle me-2"></i>Manual Simulation Triggers</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- CPU Simulations -->
+                            <div class="col-lg-6 mb-3">
+                                <h6 class="text-danger"><i class="fas fa-microchip me-2"></i>CPU Load Simulations</h6>
+                                <div class="btn-group-vertical w-100" role="group">
+                                    <button class="btn btn-outline-danger" onclick="triggerSimulation('cpu-exhaust')">
+                                        <i class="fas fa-fire me-2"></i>CPU Exhaustion (100 tasks, 120s)
+                                    </button>
+                                    <button class="btn btn-outline-warning" onclick="triggerSimulation('cpu-intensive')">
+                                        <i class="fas fa-bolt me-2"></i>CPU Intensive (60s)
+                                    </button>
+                                    <button class="btn btn-outline-info" onclick="triggerSimulation('cpu-fibonacci')">
+                                        <i class="fas fa-calculator me-2"></i>Fibonacci(40)
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="triggerSimulation('cpu-primes')">
+                                        <i class="fas fa-hashtag me-2"></i>Prime Calculation (1M)
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Database Simulations -->
+                            <div class="col-lg-6 mb-3">
+                                <h6 class="text-primary"><i class="fas fa-database me-2"></i>Database Simulations</h6>
+                                <div class="btn-group-vertical w-100" role="group">
+                                    <button class="btn btn-outline-danger" onclick="triggerSimulation('db-timeout')">
+                                        <i class="fas fa-clock me-2"></i>Database Timeout
+                                    </button>
+                                    <button class="btn btn-outline-warning" onclick="triggerSimulation('db-slow-query')">
+                                        <i class="fas fa-hourglass-half me-2"></i>Slow Query (5s)
+                                    </button>
+                                    <button class="btn btn-outline-danger" onclick="triggerSimulation('db-connection-failure')">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>Connection Failure
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Info -->
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>System Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-5">Total Memory:</dt>
+                            <dd class="col-sm-7" id="totalMemory">-- MB</dd>
+
+                            <dt class="col-sm-5">Free Memory:</dt>
+                            <dd class="col-sm-7" id="freeMemory">-- MB</dd>
+
+                            <dt class="col-sm-5">Max Memory:</dt>
+                            <dd class="col-sm-7" id="maxMemory">-- MB</dd>
+
+                            <dt class="col-sm-5">Peak Thread Count:</dt>
+                            <dd class="col-sm-7" id="peakThreadCount">--</dd>
+
+                            <dt class="col-sm-5">Daemon Threads:</dt>
+                            <dd class="col-sm-7" id="daemonThreads">--</dd>
+
+                            <dt class="col-sm-5">Last Update:</dt>
+                            <dd class="col-sm-7" id="lastUpdate">--</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>About This Panel</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2"><strong>Purpose:</strong> This admin panel reveals what's happening behind the scenes.</p>
+                        <p class="mb-2"><strong>Active Simulations:</strong> Shows which user operations are triggering which simulation APIs.</p>
+                        <p class="mb-2"><strong>Manual Triggers:</strong> Directly invoke simulation endpoints for testing.</p>
+                        <p class="mb-2"><strong>Real-time Metrics:</strong> Monitor system resources during simulations.</p>
+                        <hr>
+                        <p class="mb-0"><small class="text-muted">
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                            This interface is for demonstration and training purposes.
+                        </small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-dark text-white">
+        <div class="container text-center">
+            <span>
+                Admin Panel - Document Processing Platform v1.0.0
+            </span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+    <!-- jQuery -->
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+    <!-- Admin JS -->
+    <script th:src="@{/js/admin.js}"></script>
+</body>
+</html>

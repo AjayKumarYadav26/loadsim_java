@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod +x /c/loadsim_java/deployment/db-setup.sh)",
+      "Bash(mvn clean:*)",
+      "Bash(java -version)",
+      "Bash(javac -version)",
+      "Bash(mvn spring-boot:run)",
+      "Bash(curl -s http://localhost:8090/actuator/health)",
+      "Bash(curl -s http://localhost:8090/api/health)",
+      "Bash(curl -s http://localhost:8090/api/health/threadpool)",
+      "Bash(curl -s http://localhost:8090/api/ddos/status)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :8090)",
+      "Bash(taskkill /F /PID 64400)",
+      "Bash(cmd //c taskkill //F //PID 64400)",
+      "Bash(curl -s http://localhost:8090/)",
+      "Bash(cmd //c taskkill //F //PID 66432)",
+      "Bash(cmd //c taskkill //F //PID 65516)",
+      "Bash(curl -s http://localhost:8090/v3/api-docs)",
+      "Bash(cmd //c taskkill //F //PID 59916)",
+      "Bash(cmd //c taskkill //F //PID 70344)",
+      "Bash(xargs wc:*)",
+      "Bash(cmd //c taskkill //F //PID 70012)",
+      "Bash(curl -s http://localhost:8090/portal)",
+      "Bash(curl -sI http://localhost:8090/)",
+      "Bash(jps -l)",
+      "Bash(taskkill /PID 71576 /F)",
+      "Bash(kill -9 71576)",
+      "Bash(pkill -9 -f \"ktlo-simulator\")",
+      "Bash(cmd.exe //c \"taskkill //PID 71576 //F\")",
+      "Bash(cmd.exe /c \"taskkill /PID 71576 /F\")",
+      "Bash(mvn compile:*)",
+      "Bash(ssh:*)"
+    ]
+  }
+}

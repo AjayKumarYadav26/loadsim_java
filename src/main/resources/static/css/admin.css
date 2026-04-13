@@ -1,0 +1,143 @@
+/**
+ * Admin Panel Custom Styles
+ * Dark theme for admin interface
+ */
+
+/* Admin Body */
+.admin-body {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+/* Admin Cards */
+.admin-body .card {
+    background-color: #2a2a2a;
+    border-color: #404040;
+}
+
+.admin-body .card-header {
+    background-color: #343a40;
+    border-bottom-color: #404040;
+}
+
+.admin-body .card-body {
+    color: #e0e0e0;
+}
+
+/* Tables */
+.admin-body .table {
+    color: #e0e0e0;
+}
+
+.admin-body .table-hover tbody tr:hover {
+    background-color: #3a3a3a;
+}
+
+.admin-body .table thead {
+    border-bottom: 2px solid #404040;
+}
+
+.admin-body .table td,
+.admin-body .table th {
+    border-color: #404040;
+}
+
+/* Buttons */
+.admin-body .btn-outline-danger,
+.admin-body .btn-outline-warning,
+.admin-body .btn-outline-info,
+.admin-body .btn-outline-secondary,
+.admin-body .btn-outline-primary {
+    color: #e0e0e0;
+    border-color: currentColor;
+}
+
+.admin-body .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.admin-body .btn-outline-warning:hover {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.admin-body .btn-outline-info:hover {
+    background-color: #0dcaf0;
+    color: #000;
+}
+
+.admin-body .btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.admin-body .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+/* Code blocks */
+.admin-body code {
+    background-color: #1a1a1a;
+    color: #0dcaf0;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+/* Navbar */
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #fff;
+}
+
+/* Footer */
+.admin-body .footer {
+    background-color: #212529 !important;
+    border-top: 1px solid #404040;
+}
+
+/* Definition lists */
+.admin-body dl dt {
+    color: #adb5bd;
+}
+
+.admin-body dl dd {
+    color: #e0e0e0;
+}
+
+/* Text muted */
+.admin-body .text-muted {
+    color: #6c757d !important;
+}
+
+/* Alerts positioned */
+.alert.position-fixed {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Badge styling */
+.admin-body .badge {
+    font-size: 0.85em;
+}
+
+/* Progress bars */
+.admin-body .progress {
+    background-color: #404040;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .admin-body .card-body .btn-group-vertical {
+        width: 100%;
+    }
+
+    .admin-body .card-body .btn-group-vertical .btn {
+        font-size: 0.875rem;
+        padding: 0.5rem;
+    }
+}

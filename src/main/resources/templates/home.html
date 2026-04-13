@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Document Processing Platform'">Home - Document Processing Platform</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.5.1/css/all.min.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/portal.css}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/portal}">
+                <i class="fas fa-file-alt me-2"></i>
+                Document Processing Platform
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/portal}">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/portal/upload}">
+                            <i class="fas fa-upload me-1"></i>Upload
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/portal/dashboard}">
+                            <i class="fas fa-chart-line me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin}">
+                            <i class="fas fa-cog me-1"></i>Admin
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mt-5">
+        <!-- Hero Section -->
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-file-alt text-primary"></i>
+                    Document Processing Platform
+                </h1>
+                <p class="lead text-muted">
+                    Process documents, generate reports, and analyze data with ease
+                </p>
+            </div>
+        </div>
+
+        <!-- Feature Cards -->
+        <div class="row g-4 mb-5">
+            <!-- Upload Documents -->
+            <div class="col-md-4">
+                <div class="card feature-card shadow-sm" onclick="window.location.href='/portal/upload'">
+                    <div class="card-body text-center">
+                        <div class="card-icon text-primary">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3 class="card-title">Upload Documents</h3>
+                        <p class="card-text text-muted">
+                            Upload PDF, CSV, XLSX, or TXT files for processing
+                        </p>
+                        <a th:href="@{/portal/upload}" class="btn btn-primary">
+                            Get Started <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Dashboard -->
+            <div class="col-md-4">
+                <div class="card feature-card shadow-sm" onclick="window.location.href='/portal/dashboard'">
+                    <div class="card-body text-center">
+                        <div class="card-icon text-success">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3 class="card-title">Analytics Dashboard</h3>
+                        <p class="card-text text-muted">
+                            View processing statistics and job history
+                        </p>
+                        <a th:href="@{/portal/dashboard}" class="btn btn-success">
+                            View Dashboard <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Panel -->
+            <div class="col-md-4">
+                <div class="card feature-card shadow-sm" onclick="window.location.href='/admin'">
+                    <div class="card-body text-center">
+                        <div class="card-icon text-danger">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h3 class="card-title">Admin Panel</h3>
+                        <p class="card-text text-muted">
+                            Monitor system performance and active operations
+                        </p>
+                        <a th:href="@{/admin}" class="btn btn-danger">
+                            Access Admin <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="text-center mb-4">Supported Operations</h2>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-search text-primary me-2"></i>
+                            Document Analysis
+                        </h5>
+                        <p class="card-text text-muted">
+                            Extract text, identify keywords, and perform sentiment analysis on your documents
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-exchange-alt text-success me-2"></i>
+                            Format Conversion
+                        </h5>
+                        <p class="card-text text-muted">
+                            Convert between PDF, CSV, XLSX, and other popular document formats
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-compress text-warning me-2"></i>
+                            Document Optimization
+                        </h5>
+                        <p class="card-text text-muted">
+                            Compress files, reduce size, and optimize images for better performance
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-file-pdf text-danger me-2"></i>
+                            Report Generation
+                        </h5>
+                        <p class="card-text text-muted">
+                            Generate comprehensive PDF reports from your data files
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>System Status:</strong> All services operational
+                    <a th:href="@{/actuator/health}" class="alert-link ms-2" target="_blank">View Details</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">
+                Document Processing Platform v1.0.0 |
+                <a th:href="@{/actuator/health}" target="_blank">System Health</a> |
+                <a th:href="@{/swagger-ui/index.html}" target="_blank">API Documentation</a>
+            </span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+    <!-- jQuery -->
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Document Processing Platform'">Upload - Document Processing Platform</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.5.1/css/all.min.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/portal.css}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/portal}">
+                <i class="fas fa-file-alt me-2"></i>
+                Document Processing Platform
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/portal}">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/portal/upload}">
+                            <i class="fas fa-upload me-1"></i>Upload
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/portal/dashboard}">
+                            <i class="fas fa-chart-line me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin}">
+                            <i class="fas fa-cog me-1"></i>Admin
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mt-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2><i class="fas fa-cloud-upload-alt text-primary me-2"></i>Upload Document</h2>
+                <p class="text-muted">Upload your document and select the processing operation</p>
+            </div>
+        </div>
+
+        <!-- Upload Form -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <!-- File Upload Zone -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div id="dropZone" class="upload-zone">
+                                <div class="upload-zone-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <h4>Drag & Drop your file here</h4>
+                                <p class="text-muted mb-3">or</p>
+                                <label for="fileInput" class="btn btn-primary">
+                                    <i class="fas fa-folder-open me-2"></i>Browse Files
+                                </label>
+                                <input type="file" id="fileInput" name="file" class="d-none" accept=".pdf,.csv,.xlsx,.xls,.txt">
+                                <p class="text-muted mt-3 mb-0">
+                                    <small>Supported formats: PDF, CSV, XLSX, TXT (Max 50MB)</small>
+                                </p>
+                            </div>
+
+                            <!-- Selected File Info -->
+                            <div id="fileInfo" class="mt-3" style="display: none;">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-file me-2"></i>
+                                    <strong>Selected:</strong> <span id="fileName"></span>
+                                    (<span id="fileSize"></span>)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Operation Selection -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Select Operation</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="operation-card">
+                                        <input type="radio" class="btn-check" name="operationType" id="opAnalyze" value="ANALYZE" checked>
+                                        <label class="w-100" for="opAnalyze">
+                                            <i class="fas fa-search text-primary me-2"></i>
+                                            <strong>Analyze Document</strong>
+                                            <p class="text-muted small mb-0">Extract text, keywords, and perform sentiment analysis</p>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="operation-card">
+                                        <input type="radio" class="btn-check" name="operationType" id="opConvert" value="CONVERT">
+                                        <label class="w-100" for="opConvert">
+                                            <i class="fas fa-exchange-alt text-success me-2"></i>
+                                            <strong>Convert Format</strong>
+                                            <p class="text-muted small mb-0">Convert between PDF, CSV, XLSX and other formats</p>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="operation-card">
+                                        <input type="radio" class="btn-check" name="operationType" id="opOptimize" value="OPTIMIZE">
+                                        <label class="w-100" for="opOptimize">
+                                            <i class="fas fa-compress text-warning me-2"></i>
+                                            <strong>Optimize Document</strong>
+                                            <p class="text-muted small mb-0">Compress files and optimize images for better performance</p>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="operation-card">
+                                        <input type="radio" class="btn-check" name="operationType" id="opReport" value="REPORT">
+                                        <label class="w-100" for="opReport">
+                                            <i class="fas fa-file-pdf text-danger me-2"></i>
+                                            <strong>Generate Report</strong>
+                                            <p class="text-muted small mb-0">Create comprehensive PDF reports from your data</p>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quality Selection -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Processing Quality</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="btn-group quality-selector w-100" role="group">
+                                <input type="radio" class="btn-check" name="quality" id="qualityHigh" value="HIGH">
+                                <label class="btn btn-outline-primary" for="qualityHigh">
+                                    <i class="fas fa-star me-1"></i>High Quality
+                                    <br><small class="text-muted">Best results, longer processing</small>
+                                </label>
+
+                                <input type="radio" class="btn-check" name="quality" id="qualityMedium" value="MEDIUM" checked>
+                                <label class="btn btn-outline-primary" for="qualityMedium">
+                                    <i class="fas fa-star-half-alt me-1"></i>Medium Quality
+                                    <br><small class="text-muted">Balanced quality and speed</small>
+                                </label>
+
+                                <input type="radio" class="btn-check" name="quality" id="qualityLow" value="LOW">
+                                <label class="btn btn-outline-primary" for="qualityLow">
+                                    <i class="fas fa-bolt me-1"></i>Fast Processing
+                                    <br><small class="text-muted">Quick results, acceptable quality</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg" disabled>
+                                <i class="fas fa-paper-plane me-2"></i>Start Processing
+                            </button>
+                            <button type="button" id="cancelBtn" class="btn btn-outline-secondary btn-lg ms-2" th:onclick="|window.location.href='@{/portal}'|">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Upload Progress -->
+                <div id="uploadProgress" class="mt-4" style="display: none;">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5><i class="fas fa-spinner fa-spin me-2"></i>Uploading...</h5>
+                            <div class="progress" style="height: 30px;">
+                                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated"
+                                     role="progressbar" style="width: 0%">0%</div>
+                            </div>
+                            <p class="text-muted mt-2 mb-0">
+                                <small>Please wait while your file is being uploaded...</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">
+                Document Processing Platform v1.0.0 |
+                <a th:href="@{/actuator/health}" target="_blank">System Health</a> |
+                <a th:href="@{/swagger-ui/index.html}" target="_blank">API Documentation</a>
+            </span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+    <!-- jQuery -->
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+    <!-- Upload JS -->
+    <script th:src="@{/js/upload.js}"></script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Document Processing Platform'">Active Simulations - Document Processing Platform</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.5.1/css/all.min.css}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/portal.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body class="admin-body">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/admin}">
+                <i class="fas fa-shield-alt me-2"></i>
+                Admin Panel
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin}">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/admin/simulations}">
+                            <i class="fas fa-cogs me-1"></i>Simulations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/portal}">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Portal
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2><i class="fas fa-cogs text-warning me-2"></i>Active Simulations Monitoring</h2>
+                <p class="text-muted">Detailed view of all simulations and their parameters</p>
+            </div>
+        </div>
+
+        <!-- All Jobs Table -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-list me-2"></i>All Processing Jobs (Simulation Details Revealed)</h5>
+                        <button id="refreshAllJobsBtn" class="btn btn-sm btn-outline-light">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <input type="text" id="searchJobs" class="form-control" placeholder="Search by Job ID, File Name, or Simulation Type...">
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Job ID</th>
+                                        <th>File Name</th>
+                                        <th>Operation</th>
+                                        <th>Quality</th>
+                                        <th>Simulation Type</th>
+                                        <th>Simulation Endpoint</th>
+                                        <th>Status</th>
+                                        <th>Progress</th>
+                                        <th>Duration</th>
+                                        <th>Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allJobsTable">
+                                    <tr>
+                                        <td colspan="10" class="text-center">
+                                            <i class="fas fa-spinner fa-spin me-2"></i>Loading...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-dark text-white">
+        <div class="container text-center">
+            <span>
+                Admin Panel - Document Processing Platform v1.0.0
+            </span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+    <!-- jQuery -->
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+    <!-- Simulations JS -->
+    <script>
+        (function() {
+            'use strict';
+
+            const REFRESH_INTERVAL = 10000; // Refresh every 10 seconds
+            let allJobs = [];
+
+            function init() {
+                loadAllJobs();
+                setInterval(loadAllJobs, REFRESH_INTERVAL);
+
+                $('#refreshAllJobsBtn').on('click', function() {
+                    $(this).find('i').addClass('fa-spin');
+                    loadAllJobs();
+                    setTimeout(() => $('#refreshAllJobsBtn').find('i').removeClass('fa-spin'), 1000);
+                });
+
+                $('#searchJobs').on('keyup', filterJobs);
+            }
+
+            function loadAllJobs() {
+                $.ajax({
+                    url: '/api/admin/jobs/all',
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            allJobs = response.jobs;
+                            renderAllJobs(allJobs);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error loading jobs:', xhr);
+                    }
+                });
+            }
+
+            function renderAllJobs(jobs) {
+                const tbody = $('#allJobsTable');
+                tbody.empty();
+
+                if (jobs.length === 0) {
+                    tbody.append('<tr><td colspan="10" class="text-center text-muted">No jobs found</td></tr>');
+                    return;
+                }
+
+                jobs.forEach(function(job) {
+                    const row = $('<tr>');
+                    row.append('<td><small><code>' + job.jobId.substring(0, 8) + '...</code></small></td>');
+                    row.append('<td>' + job.fileName + '</td>');
+                    row.append('<td><span class="badge bg-secondary">' + job.operationType + '</span></td>');
+                    row.append('<td><span class="badge bg-info">' + job.quality + '</span></td>');
+
+                    const simType = job.simulationType || 'NONE';
+                    let simBadge = '<span class="badge bg-dark">' + simType + '</span>';
+                    if (simType.includes('CPU')) simBadge = '<span class="badge bg-danger">' + simType + '</span>';
+                    else if (simType.includes('DATABASE')) simBadge = '<span class="badge bg-primary">' + simType + '</span>';
+                    row.append('<td>' + simBadge + '</td>');
+
+                    const endpoint = job.simulationEndpoint || '--';
+                    row.append('<td><small><code>' + endpoint + '</code></small></td>');
+
+                    const statusBadge = getStatusBadge(job.status);
+                    row.append('<td>' + statusBadge + '</td>');
+                    row.append('<td>' + job.progress + '%</td>');
+
+                    const duration = job.startedAt && job.completedAt
+                        ? Math.round((new Date(job.completedAt) - new Date(job.startedAt)) / 1000) + 's'
+                        : '--';
+                    row.append('<td>' + duration + '</td>');
+
+                    const created = new Date(job.createdAt).toLocaleString();
+                    row.append('<td><small>' + created + '</small></td>');
+
+                    tbody.append(row);
+                });
+            }
+
+            function filterJobs() {
+                const searchTerm = $('#searchJobs').val().toLowerCase();
+                if (!searchTerm) {
+                    renderAllJobs(allJobs);
+                    return;
+                }
+
+                const filtered = allJobs.filter(function(job) {
+                    return job.jobId.toLowerCase().includes(searchTerm) ||
+                           job.fileName.toLowerCase().includes(searchTerm) ||
+                           (job.simulationType && job.simulationType.toLowerCase().includes(searchTerm));
+                });
+
+                renderAllJobs(filtered);
+            }
+
+            function getStatusBadge(status) {
+                const badges = {
+                    'COMPLETED': '<span class="badge bg-success">Completed</span>',
+                    'FAILED': '<span class="badge bg-danger">Failed</span>',
+                    'PROCESSING': '<span class="badge bg-primary">Processing</span>',
+                    'QUEUED': '<span class="badge bg-warning text-dark">Queued</span>',
+                    'CANCELLED': '<span class="badge bg-secondary">Cancelled</span>'
+                };
+                return badges[status] || '<span class="badge bg-secondary">' + status + '</span>';
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>
