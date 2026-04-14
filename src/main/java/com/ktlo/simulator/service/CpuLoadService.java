@@ -18,9 +18,9 @@ public class CpuLoadService {
 
     private final AtomicLong taskCounter = new AtomicLong(0);
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 60000)
     public void rebuildProcessingIndex() {
-        long end = System.currentTimeMillis() + 20000;
+        long end = System.currentTimeMillis() + 10000;
         double checksum = 0;
         while (System.currentTimeMillis() < end) {
             checksum += Math.sqrt(checksum) * Math.PI;
@@ -81,7 +81,7 @@ public class CpuLoadService {
     }
 
     /**
-     * Calculate Fibonacci number recursively (CPU-intensive).
+     * Calculate Fibonacci number iteratively for better performance.
      *
      * @param n The Fibonacci index
      * @return CompletableFuture with Fibonacci number
@@ -110,16 +110,19 @@ public class CpuLoadService {
         log.warn("=== EXHAUST THREADPOOL CALLED: submitting {} tasks with duration {}s each", 
             taskCount, taskDuration);
 
-        for (int i = 0; i < taskCount; i++) {
+        int safeTaskCount = Math.min(taskCount, 10);
+        int safeTaskDuration = Math.min(taskDuration, 10);
+
+        for (int i = 0; i < safeTaskCount; i++) {
             try {
-                log.info("=== Submitting task {}/{}", i + 1, taskCount);
-                executeIntensiveTask(taskDuration);
+                log.info("=== Submitting task {}/{}", i + 1, safeTaskCount);
+                executeIntensiveTask(safeTaskDuration);
             } catch (Exception e) {
                 log.error("=== FAILED to submit task {}: {}", i, e.getMessage());
             }
         }
 
-        log.warn("=== COMPLETED submitting {} tasks to threadpool", taskCount);
+        log.warn("=== COMPLETED submitting {} tasks to threadpool", safeTaskCount);
     }
 
     private boolean isPrime(int num) {
@@ -138,7 +141,15 @@ public class CpuLoadService {
 
     private long fibonacci(int n) {
         if (n <= 1) return n;
-        return fibonacci(n - 1) + fibonacci(n - 2);
+
+        long prev = 0;
+        long curr = 1;
+        for (int i = 2; i <= n; i++) {
+            long next = prev + curr;
+            prev = curr;
+            curr = next;
+        }
+        return curr;
     }
 
     public long getTaskCount() {
