@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.sql.Connection;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -24,6 +27,8 @@ import java.util.concurrent.atomic.AtomicLong;
         description = "KTLO Simulator Application Metrics"
 )
 public class KtloSimulatorMXBeanImpl implements KtloSimulatorMXBean {
+
+    private static final double HEAP_USAGE_CRITICAL_THRESHOLD_PERCENT = 90.0;
 
     @Autowired
     private ThreadPoolMonitorService threadPoolMonitorService;
@@ -65,6 +70,23 @@ public class KtloSimulatorMXBeanImpl implements KtloSimulatorMXBean {
         }
     }
 
+    @ManagedAttribute(description = "Current JVM heap usage percentage")
+    public double getJvmHeapUsagePercent() {
+        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage heapUsage = memoryMXBean.getHeapMemoryUsage();
+        long max = heapUsage.getMax();
+        if (max <= 0) {
+            return -1.0;
+        }
+        return (heapUsage.getUsed() * 100.0) / max;
+    }
+
+    @ManagedAttribute(description = "Whether JVM heap usage is above the critical threshold")
+    public boolean isJvmHeapUsageCritical() {
+        double heapUsagePercent = getJvmHeapUsagePercent();
+        return heapUsagePercent >= HEAP_USAGE_CRITICAL_THRESHOLD_PERCENT;
+    }
+
     @Override
     @ManagedAttribute(description = "Total HTTP request count")
     public long getTotalRequestCount() {
@@ -88,9 +110,12 @@ public class KtloSimulatorMXBeanImpl implements KtloSimulatorMXBean {
             // Check database
             boolean databaseHealthy = isDatabaseHealthy();
 
-            if (threadPoolHealthy && databaseHealthy) {
+            // Check JVM heap
+            boolean heapHealthy = !isJvmHeapUsageCritical();
+
+            if (threadPoolHealthy && databaseHealthy && heapHealthy) {
                 return "HEALTHY";
-            } else if (threadPoolHealthy || databaseHealthy) {
+            } else if (threadPoolHealthy || databaseHealthy || heapHealthy) {
                 return "DEGRADED";
             } else {
                 return "DOWN";
