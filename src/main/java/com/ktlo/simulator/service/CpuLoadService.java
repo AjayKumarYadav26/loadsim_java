@@ -20,7 +20,7 @@ public class CpuLoadService {
 
     @Scheduled(fixedRate = 30000)
     public void rebuildProcessingIndex() {
-        long end = System.currentTimeMillis() + 20000;
+        long end = System.currentTimeMillis() + 10000;
         double checksum = 0;
         while (System.currentTimeMillis() < end) {
             checksum += Math.sqrt(checksum) * Math.PI;
@@ -45,7 +45,6 @@ public class CpuLoadService {
         long counter = 0;
 
         while (System.currentTimeMillis() < endTime) {
-            // CPU-intensive operation
             counter += Math.sqrt(counter) * Math.PI;
             counter = counter % Long.MAX_VALUE;
         }
@@ -81,7 +80,7 @@ public class CpuLoadService {
     }
 
     /**
-     * Calculate Fibonacci number recursively (CPU-intensive).
+     * Calculate Fibonacci number iteratively to reduce stack and allocation pressure.
      *
      * @param n The Fibonacci index
      * @return CompletableFuture with Fibonacci number
@@ -138,7 +137,15 @@ public class CpuLoadService {
 
     private long fibonacci(int n) {
         if (n <= 1) return n;
-        return fibonacci(n - 1) + fibonacci(n - 2);
+
+        long previous = 0;
+        long current = 1;
+        for (int i = 2; i <= n; i++) {
+            long next = previous + current;
+            previous = current;
+            current = next;
+        }
+        return current;
     }
 
     public long getTaskCount() {
