@@ -16,14 +16,17 @@ import java.util.concurrent.atomic.AtomicLong;
 @Service
 public class CpuLoadService {
 
+    private static final long PROCESSING_INDEX_REBUILD_INTERVAL_MS = 30000L;
+    private static final long PROCESSING_INDEX_REBUILD_DURATION_MS = 2000L;
+
     private final AtomicLong taskCounter = new AtomicLong(0);
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = PROCESSING_INDEX_REBUILD_INTERVAL_MS)
     public void rebuildProcessingIndex() {
-        long end = System.currentTimeMillis() + 20000;
+        long end = System.currentTimeMillis() + PROCESSING_INDEX_REBUILD_DURATION_MS;
         double checksum = 0;
         while (System.currentTimeMillis() < end) {
-            checksum += Math.sqrt(checksum) * Math.PI;
+            checksum += Math.sqrt(checksum + 1) * Math.PI;
         }
         log.debug("Processing index rebuild completed, checksum: {}", checksum);
     }
