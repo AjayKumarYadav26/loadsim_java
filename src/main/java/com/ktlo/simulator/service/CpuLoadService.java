@@ -16,16 +16,28 @@ import java.util.concurrent.atomic.AtomicLong;
 @Service
 public class CpuLoadService {
 
+    private static final long REBUILD_INTERVAL_MS = 30000L;
+    private static final long REBUILD_WORK_BUDGET_MS = 2000L;
+    private static final long TASK_YIELD_INTERVAL = 100_000L;
+
     private final AtomicLong taskCounter = new AtomicLong(0);
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = REBUILD_INTERVAL_MS)
     public void rebuildProcessingIndex() {
-        long end = System.currentTimeMillis() + 20000;
+        long end = System.currentTimeMillis() + REBUILD_WORK_BUDGET_MS;
         double checksum = 0;
+        long iterations = 0;
+
         while (System.currentTimeMillis() < end) {
-            checksum += Math.sqrt(checksum) * Math.PI;
+            checksum += Math.sqrt(checksum + iterations) * Math.PI;
+            iterations++;
+
+            if (iterations % TASK_YIELD_INTERVAL == 0) {
+                Thread.yield();
+            }
         }
-        log.debug("Processing index rebuild completed, checksum: {}", checksum);
+
+        log.debug("Processing index rebuild completed after {} iterations, checksum: {}", iterations, checksum);
     }
 
     /**
@@ -43,11 +55,16 @@ public class CpuLoadService {
 
         long endTime = System.currentTimeMillis() + (durationSeconds * 1000L);
         long counter = 0;
+        long iterations = 0;
 
         while (System.currentTimeMillis() < endTime) {
-            // CPU-intensive operation
-            counter += Math.sqrt(counter) * Math.PI;
+            counter += (long) (Math.sqrt(counter + iterations) * Math.PI);
             counter = counter % Long.MAX_VALUE;
+            iterations++;
+
+            if (iterations % TASK_YIELD_INTERVAL == 0) {
+                Thread.yield();
+            }
         }
 
         String result = String.format("Task %d completed on thread %s. Counter: %d", taskId, threadName, counter);
@@ -73,6 +90,10 @@ public class CpuLoadService {
         for (int num = 2; num <= limit; num++) {
             if (isPrime(num)) {
                 primeCount++;
+            }
+
+            if (num % 10_000 == 0) {
+                Thread.yield();
             }
         }
 
