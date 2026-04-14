@@ -31,6 +31,25 @@ A web-based document processing and analytics platform built with Spring Boot. B
 - **JMX Monitoring**: Real-time metrics via JMX beans
 - **Comprehensive Logging**: Separate error.log and access.log files
 
+## Log Analysis Notes
+
+The latest log review indicates the application restarted cleanly after the VM reboot and did not show a critical startup failure.
+
+### Key Findings
+- The `debug.log` startup sequence completed successfully after reboot.
+- The `Error parsing HTTP request header` entry is consistent with HTTPS traffic being sent to the HTTP port `8090`.
+- Repeated startup warnings suggest possible unintended database access.
+- `ClientAbortException` / `Broken pipe` entries are consistent with a client disconnect during response writing.
+- `404` requests in the access logs may indicate probing or missing routes.
+- Post-restart traffic to `/portal` and `/admin` returned `200`, which matches the observed stable restart pattern.
+- No sustained error loop was identified.
+
+### Recommendations
+1. Confirm the application is expected to serve plain HTTP on port `8090` and ensure HTTPS traffic is handled appropriately.
+2. Consider disabling `spring.jpa.open-in-view` if it is not required.
+3. Review `404` / probing traffic for unintended endpoints.
+4. Treat `Broken pipe` as a client disconnect unless it becomes frequent.
+
 ## Tech Stack
 
 **Backend**:
