@@ -432,6 +432,16 @@ loadsim_java/
     └── ktlo-simulator.service  # Systemd service
 ```
 
+## Broken Pipe Analysis Notes
+
+The `Broken pipe` exception observed in Step 6 is consistent with a client disconnect during response transmission. The available analysis does not indicate an application crash, CPU saturation, or thread pool exhaustion.
+
+### Recommended Follow-up
+- Correlate the exception timestamp with access logs and request duration.
+- Review proxy, load balancer, and client timeout settings.
+- Monitor for recurrence of broken pipe errors.
+- If CPU or thread exhaustion becomes a concern, inspect thread dumps and performance metrics.
+
 ## License
 
 This is a demonstration/simulation application for KTLO training purposes.
