@@ -81,7 +81,7 @@ public class CpuLoadService {
     }
 
     /**
-     * Calculate Fibonacci number recursively (CPU-intensive).
+     * Calculate Fibonacci number iteratively (optimized).
      *
      * @param n The Fibonacci index
      * @return CompletableFuture with Fibonacci number
@@ -93,7 +93,7 @@ public class CpuLoadService {
 
         log.info("Fibonacci task {} started on thread: {}, n: {}", taskId, threadName, n);
 
-        long result = fibonacci(n);
+        long result = fibonacciIterative(n);
 
         log.info("Fibonacci task {} completed. Result: {}", taskId, result);
         return CompletableFuture.completedFuture(result);
@@ -136,9 +136,15 @@ public class CpuLoadService {
         return true;
     }
 
-    private long fibonacci(int n) {
+    private long fibonacciIterative(int n) {
         if (n <= 1) return n;
-        return fibonacci(n - 1) + fibonacci(n - 2);
+        long prev = 0, curr = 1;
+        for (int i = 2; i <= n; i++) {
+            long temp = curr;
+            curr = prev + curr;
+            prev = temp;
+        }
+        return curr;
     }
 
     public long getTaskCount() {
