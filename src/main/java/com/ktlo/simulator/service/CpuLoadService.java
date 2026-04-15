@@ -16,14 +16,24 @@ import java.util.concurrent.atomic.AtomicLong;
 @Service
 public class CpuLoadService {
 
+    private static final long INDEX_REBUILD_DURATION_MS = 5000L;
+    private static final long INDEX_REBUILD_SLEEP_MS = 10L;
+
     private final AtomicLong taskCounter = new AtomicLong(0);
 
     @Scheduled(fixedRate = 30000)
     public void rebuildProcessingIndex() {
-        long end = System.currentTimeMillis() + 20000;
+        long end = System.currentTimeMillis() + INDEX_REBUILD_DURATION_MS;
         double checksum = 0;
         while (System.currentTimeMillis() < end) {
-            checksum += Math.sqrt(checksum) * Math.PI;
+            checksum += Math.sqrt(checksum + 1) * Math.PI;
+            try {
+                Thread.sleep(INDEX_REBUILD_SLEEP_MS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.warn("Processing index rebuild interrupted");
+                return;
+            }
         }
         log.debug("Processing index rebuild completed, checksum: {}", checksum);
     }
@@ -46,7 +56,7 @@ public class CpuLoadService {
 
         while (System.currentTimeMillis() < endTime) {
             // CPU-intensive operation
-            counter += Math.sqrt(counter) * Math.PI;
+            counter += Math.sqrt(counter + 1) * Math.PI;
             counter = counter % Long.MAX_VALUE;
         }
 
