@@ -95,6 +95,10 @@ public class DatabaseConfig {
         config.setMinimumIdle(2);
         config.setIdleTimeout(600000);
         config.setMaxLifetime(1800000);
+        config.setLeakDetectionThreshold(2000);
+        config.setValidationTimeout(5000);
+        config.setConnectionTestQuery("SELECT 1");
+        config.setPoolName("KtloHikariPool-" + connectionTimeout + "ms");
 
         // Disable startup validation for failure simulation DataSources
         if (!validateOnStartup) {
@@ -103,9 +107,6 @@ public class DatabaseConfig {
 
         // Disable JMX registration - use Spring Actuator metrics instead
         config.setRegisterMbeans(false);
-
-        // Pool name for identification
-        config.setPoolName("KtloHikariPool-" + connectionTimeout + "ms");
 
         return new HikariDataSource(config);
     }
