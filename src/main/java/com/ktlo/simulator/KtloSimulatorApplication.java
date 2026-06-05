@@ -11,6 +11,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * - Threadpool exhaustion with high CPU load
  * - Database connection failures and timeouts
  * - Comprehensive logging and monitoring via JMX
+ *
+ * JVM memory tuning guidance:
+ * - Use a conservative heap size in lower environments to avoid runaway memory usage.
+ * - Prefer explicit heap settings when running load simulations so memory pressure is predictable.
  */
 @SpringBootApplication
 @EnableAsync
