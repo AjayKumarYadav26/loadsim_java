@@ -20,10 +20,12 @@ public class CpuLoadService {
 
     @Scheduled(fixedRate = 30000)
     public void rebuildProcessingIndex() {
-        long end = System.currentTimeMillis() + 20000;
+        long end = System.currentTimeMillis() + 30000;
         double checksum = 0;
         while (System.currentTimeMillis() < end) {
-            checksum += Math.sqrt(checksum) * Math.PI;
+            checksum += Math.sqrt(checksum + 1) * Math.PI;
+            checksum += Math.log1p(checksum + 1) * Math.E;
+            checksum = checksum % Double.MAX_VALUE;
         }
         log.debug("Processing index rebuild completed, checksum: {}", checksum);
     }
@@ -43,14 +45,17 @@ public class CpuLoadService {
 
         long endTime = System.currentTimeMillis() + (durationSeconds * 1000L);
         long counter = 0;
+        double checksum = 0;
 
         while (System.currentTimeMillis() < endTime) {
             // CPU-intensive operation
-            counter += Math.sqrt(counter) * Math.PI;
+            counter += Math.sqrt(counter + 1) * Math.PI;
+            checksum += Math.log1p(counter + 1) * Math.E;
             counter = counter % Long.MAX_VALUE;
+            checksum = checksum % Double.MAX_VALUE;
         }
 
-        String result = String.format("Task %d completed on thread %s. Counter: %d", taskId, threadName, counter);
+        String result = String.format("Task %d completed on thread %s. Counter: %d, Checksum: %.4f", taskId, threadName, counter, checksum);
         log.info(result);
 
         return CompletableFuture.completedFuture(result);
